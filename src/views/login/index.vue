@@ -5,7 +5,7 @@
       <!-- 表单验证
       1.在el-form 添加rules
        -->
-      <el-form :model="loginForm" :rules="loginRules" status-icon>
+      <el-form :model="loginForm" :rules="loginRules" status-icon ref="loginForm">
         <el-form-item prop="mobile" >
           <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
@@ -20,7 +20,7 @@
         <el-form-item>
           <el-checkbox :value="true">我已经阅读和同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
-        <el-button type="primary" style="width:100%">登 录</el-button>
+        <el-button type="primary" style="width:100%" @click="login()">登 录</el-button>
       </el-form>
     </el-card>
   </div>
@@ -30,10 +30,15 @@
 export default {
   name: "app-login",
   data() {
+    // 自定义校验
+  
     const checkMobile=(rule,value,callback)=>{
+      //value 需校验的内容
       if(!/^1[3-9]\d{9}$/.test(value)){
+        //校验失败
         return callback (new Error('手机号格式不对'))
       }
+     //校验成功
       callback()
     }
     return {
@@ -52,6 +57,17 @@ export default {
           ]
       }
     };
+  },
+  methods:{
+    login(){
+      //对整体表单进行校验
+      this.$refs.loginForm.validate((valid)=>{
+        //valid值为true则校验成功
+        if(valid){
+
+        }
+      })
+    }
   }
 };
 </script>

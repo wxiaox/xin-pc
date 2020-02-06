@@ -7,11 +7,15 @@ import App from './App.vue'
 // 1. router/index.js  省略  router  默认访问index.js文件
 // 2. ./ ../ 去找到对应的目录并不是很准确  使用vue-cli提供的@（src路径）路径
 import router from '@/router'
+//导入axios
+import axios from 'axios'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 // 使用饿了么UI
 Vue.use(ElementUI)
+//挂载$http对象
+Vue.prototype.$http = axios
 
 // 配置vue框架的日志级别  productionTip
 // fasle 不是生产环境级别日志，开发环境日志，日志详细
