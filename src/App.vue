@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-   <el-button type="success">成功按钮</el-button>
+  <router-view></router-view>
   </div>
 </template>
 
@@ -14,7 +14,5 @@ export default {
 </script>
 
 <style lang="less">
-#app {
-  
-}
+
 </style>
