@@ -1,7 +1,6 @@
 <template>
   <el-container class="container-home">
-   <el-aside class="my-aside" :width="isOpen?'200px':'64px'">
-    
+    <el-aside class="my-aside" :width="isOpen?'200px':'64px'">
       <!-- logo区域 -->
       <div class="logo" :class="{minlogo:!isOpen}"></div>
       <el-aside class="my-aside" width="200px">
@@ -14,10 +13,9 @@
           style="border-right:none"
           :collapse="!isOpen"
           :collapse-transition="false"
-
         >
           <el-menu-item index="1">
-            <i class="el-icon-s-home" ></i>
+            <i class="el-icon-s-home"></i>
             <span slot="title">首页</span>
           </el-menu-item>
           <el-menu-item index="2">
@@ -51,18 +49,18 @@
       <el-header class="my-header">
         <span @click="toggleMenu()" class="icon el-icon-s-fold"></span>
         <span class="text">江苏传智播客科技教育有限公司</span>
-        <el-dropdown class="my-dropdown">
+        <el-dropdown class="my-dropdown" @command="handleClick">
           <span class="el-dropdown-link">
             <!-- 用户头像 -->
-             <img class="head" :src="photo" alt />
+            <img class="head" :src="photo" alt />
 
             <!-- 用户名称 -->
             <strong class="name">{{name}}</strong>
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>个人设置</el-dropdown-item>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+             <el-dropdown-item command="setting">个人设置</el-dropdown-item>
+            <el-dropdown-item command="logout"  >退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
@@ -73,28 +71,42 @@
   </el-container>
 </template>
 
-<script>
+<script>  
+import auth from '@/utils/auth'
 export default {
+
   name: "app-home",
-  data(){
-    return{
-      isOpen:true,
-       name: '',
-      photo: ''
-    }
+  data() {
+    return {
+      isOpen: true,
+      name: "",
+      photo: ""
+    };
   },
-  create(){
+  create() {
     const user = auth.getUser();
-    this.name = auth.name
-    this.pooto = auth.photo
+    this.name = auth.name;
+    this.pooto = auth.photo;
   },
-  methods:{
-    toggleMenu(){
-      this.isOpen=!this.isOpen
+  methods: {
+    toggleMenu() {
+      this.isOpen = !this.isOpen;
+    },
+       // 处理下拉菜单的点击
+    handleClick (command) {
+      if (command === 'setting') {
+        this.$router.push('/setting')
+      }
+      if (command === 'logout') {
+        // 退出登录
+        // 1. 清除本地用户信息
+        auth.delUser()
+        // 2. 跳转到登录页面
+        this.$router.push('/login')
+      }
     }
   }
-
-};
+}
 </script>
 
 <style scoped lang='less'>
@@ -109,8 +121,8 @@ export default {
     .logo {
       width: 100%;
       height: 60px;
-      background: #000 url(../../assets/logo_admin.png) no-repeat center /
-        140px auto;
+      background: #000 url(../../assets/logo_admin.png) no-repeat center / 140px
+        auto;
     }
     .minlogo {
       background-image: url(../../assets/logo_admin_01.png);
