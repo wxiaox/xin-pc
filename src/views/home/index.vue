@@ -8,7 +8,7 @@
         <!-- 导航菜单 -->
         <el-menu
           default-active="1"
-          background-color="#002233"
+          background-color="#000"
           text-color="#fff"
           active-text-color="#ffd04b"
           style="border-right:none"
@@ -54,10 +54,10 @@
         <el-dropdown class="my-dropdown">
           <span class="el-dropdown-link">
             <!-- 用户头像 -->
-            <img class="head" src="../../assets/avatar.jpg" alt />
+             <img class="head" :src="photo" alt />
 
             <!-- 用户名称 -->
-            <strong class="name">周杰伦</strong>
+            <strong class="name">{{name}}</strong>
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -78,8 +78,15 @@ export default {
   name: "app-home",
   data(){
     return{
-      isOpen:true
+      isOpen:true,
+       name: '',
+      photo: ''
     }
+  },
+  create(){
+    const user = auth.getUser();
+    this.name = auth.name
+    this.pooto = auth.photo
   },
   methods:{
     toggleMenu(){
@@ -102,7 +109,7 @@ export default {
     .logo {
       width: 100%;
       height: 60px;
-      background: #002244 url(../../assets/logo_admin.png) no-repeat center /
+      background: #000 url(../../assets/logo_admin.png) no-repeat center /
         140px auto;
     }
     .minlogo {
