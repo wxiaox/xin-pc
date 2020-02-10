@@ -8,7 +8,7 @@ import App from './App.vue'
 // 2. ./ ../ 去找到对应的目录并不是很准确  使用vue-cli提供的@（src路径）路径
 import router from '@/router'
 //导入axios
-import axios from 'axios'
+import axios from '@/api'
 
 
 import ElementUI from 'element-ui'
