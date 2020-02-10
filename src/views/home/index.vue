@@ -53,7 +53,6 @@
           <span class="el-dropdown-link">
             <!-- 用户头像 -->
             <img class="head" :src="photo" alt />
-
             <!-- 用户名称 -->
             <strong class="name">{{name}}</strong>
             <i class="el-icon-arrow-down el-icon--right"></i>
@@ -79,14 +78,14 @@ export default {
   data() {
     return {
       isOpen: true,
-      name: "",
-      photo: ""
+      name: '',
+      photo: ''
     };
   },
-  create() {
+  created() {
     const user = auth.getUser();
-    this.name = auth.name;
-    this.pooto = auth.photo;
+    this.name = user.name;
+    this.photo = user.photo;
   },
   methods: {
     toggleMenu() {
