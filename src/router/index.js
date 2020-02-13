@@ -15,7 +15,7 @@ import NotFound from  '@/views/404'
 
 Vue.use(VueRouter)
 // 初始化
-
+import Image from '@/views/image'
 const router = new VueRouter({
   routes: [
     { path: '/login', component: Login },
@@ -24,7 +24,8 @@ const router = new VueRouter({
       component: Home,
       children: [
         { path: '/', component: Welcome },
-        { path: '/article', component: Article }
+        { path: '/article', component: Article },
+        { path:'/image' , component:Image}
       ]
     },
     { path:'*',component:NotFound}
