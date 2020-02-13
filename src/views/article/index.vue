@@ -70,9 +70,15 @@
         <el-table-column label="发布时间" prop="pubdate"></el-table-column>
         <el-table-column label="操作" style="120px">
           <template slot-scope="scope">
-            <el-button @click="toEdArticle(scope.row.id)" plain type="primary" icon="el-icon-edit" circle></el-button>
+            <el-button @click="toEdArticle(scope.row.id)" 
+            plain type="primary"
+             icon="el-icon-edit" 
+             circle></el-button>
             <el-button 
-            @click="delArticle" plain type="danger" icon="el-icon-delete" circle></el-button>
+            
+             plain type="danger"
+              icon="el-icon-delete" 
+              circle></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,8 +116,6 @@ export default {
     this.getArticles();
   },
   methods: {
-
-    },
     toEdArticle (id){
       this.$router.push(`publish?id=${id}`)
     },
