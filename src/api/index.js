@@ -1,7 +1,7 @@
 //导出配置好的axios
 import  axios from  'axios'
 import auth from '@/utils/auth'
-
+import JSONBINGINT from 'json-bigint'
 axios.defaults.baseURL='http://ttapi.research.itcast.cn/mp/v1_0/'
 
 
@@ -25,5 +25,13 @@ if(err.response&& err.response.status===401){
 }
 return Promise.reject(err)
 });
+
+axios.defaults.transformResponse=[data=>{
+  try {
+    return JSONBINGINT.parse(data)
+  }catch (e) {
+    return data
+  }
+}]
 
 export default axios
