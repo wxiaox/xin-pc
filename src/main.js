@@ -23,6 +23,11 @@ Vue.prototype.$http = axios
 // true 生产环境级别日志，上线之后部署服务器之后，日志简单
 Vue.config.productionTip = false
 
+// 使用自己封装的插件
+import plugin from '@/plugin'
+Vue.use(plugin)
+
+
 // 根实例
 // 使用App.vue组件渲染到 #app容器中
 new Vue({
