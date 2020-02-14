@@ -10,7 +10,7 @@ import Login from '@/views/login'
 import Home from '@/views/home'  
 import Welcome from '@/views/welcome'
 import Article from '@/views/article'
-import Publish from '@views/publish'
+import Publish from '@/views/publish'
 // 导入404 路由
 import NotFound from  '@/views/404'  
 
@@ -26,7 +26,7 @@ const router = new VueRouter({
       children: [
         { path: '/', component: Welcome },
         { path: '/article', component: Article },
-        { path:'/image' , component:Image}
+        { path:'/image' , component:Image},
         { path:'/publish', component:Publish}
       ]
     },
