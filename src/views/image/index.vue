@@ -12,7 +12,12 @@
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
-        <el-button style="float:right" type="success" size="small">添加素材</el-button>
+        <el-button 
+         style="float:right" 
+         type="success" 
+         size="small"
+         @click="openDialog"
+         >添加素材</el-button>
       </div>
       <!-- 列表 -->
       <div class="img-list">
@@ -39,13 +44,20 @@
         :total="total"
       ></el-pagination>
     </el-card>
+     <!-- 对话框 -->
+    <el-dialog title="添加素材" :visible.sync="dialogVisible" width="300px">
+      <span>上传组件</span>
+    </el-dialog>
   </div>
+
 </template>
 <script>
 export default {
   name: "app-image",
   data() {
     return {
+      //控制对话框的隐藏显示
+      dialogVisible:false,
       // 查询条件
       reqParams: {
         collect: false,
@@ -60,6 +72,12 @@ export default {
     this.getImages();
   },
   methods: {
+    //打开对话框
+    openDialog(){
+        // 1. 准备一个对话框
+      // 2. 再来打开对话框
+      this.doalogVisible = true
+    },
     //删除素材
     delImage(id){
        this.$confirm('亲，您是否要删除该图片素材?', '温馨提示', {
