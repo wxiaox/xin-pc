@@ -16,7 +16,7 @@
       </div>
       <!-- 列表 -->
       <div class="img-list">
-        <div class="img-item" v-for="item in 1images" :key="item">
+        <div class="img-item" v-for="item in images" :key="item">
           <img :src="item.url" alt />
           <div class="option">
             <span class="el-icon-star-off"></span>
@@ -25,7 +25,14 @@
         </div>
       </div>
       <!-- 分页 -->
-      <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+      <el-pagination 
+      background layout="prev, pager, next" 
+      :total="total"
+      :page-size="reqParams.per_page"
+      :current-page="reqParams.page"
+      @current-change="pager"
+      >
+      </el-pagination>
     </el-card>
   </div>
 </template>
@@ -40,16 +47,22 @@ export default {
         page: 1,
         per_page: 10
       },
-      images:[]
+      images:[],
+      total:0
     }
   },
   created(){
    this.getImages()
   },
   methods:{
+    pager(){
+      this.reqParams.page= newPage
+      this.getImages()
+    },
     async getImages(){
       const res= await this.$http.get('user/images',{params:this.reqParams})
       this.images=res.data.results
+      this.total=res.data.data.total_count
     }
   }
 }
