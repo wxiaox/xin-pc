@@ -24,7 +24,9 @@
               @click="toggleStatus(item)"
               :class="{red:item.is_collected}"
             ></span>
-            <span class="el-icon-delete"></span>
+            <span
+            @click="delImage(item.id)"
+             class="el-icon-delete"></span>
           </div>
         </div>
       </div>
@@ -58,6 +60,21 @@ export default {
     this.getImages();
   },
   methods: {
+    //删除素材
+    delImage(id){
+       this.$confirm('亲，您是否要删除该图片素材?', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'}).then(async()=>{
+          try{
+            await this.$http.delete(`/user/image${id}`)
+            this.$mesage.sucess('删除成功')
+            this.getImages()
+          }catch(e){
+            this.$message.error('删除失败')
+          }
+        }).catch(()=>{})
+    },
     async toggleStatus(item) {
       try {
         const res = await this.$http.put(`/user/images/${item.id}`, {
