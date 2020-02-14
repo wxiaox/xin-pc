@@ -12,7 +12,7 @@
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
-        <el-button style="float:right" type="success" size="small" @click="openDialog">添加素材</el-button>
+        <el-button @click="openDialog()" style="float:right" type="success" size="small">添加素材</el-button>
       </div>
       <!-- 列表 -->
       <div class="img-list">
@@ -20,9 +20,9 @@
           <img :src="item.url" alt />
           <div class="option" v-if="!reqParams.collect">
             <span
-              class="el-icon-star-off"
               @click="toggleStatus(item)"
-              :class="{red:item.is_collected}"
+              class="el-icon-star-off"
+              :class="{red: item.is_collected}"
             ></span>
             <span @click="delImage(item.id)" class="el-icon-delete"></span>
           </div>
@@ -35,15 +35,17 @@
         :page-size="reqParams.per_page"
         :current-page="reqParams.page"
         :total="total"
+        @current-change="pager"
       ></el-pagination>
     </el-card>
     <!-- 对话框 -->
     <el-dialog title="添加素材" :visible.sync="dialogVisible" width="300px">
       <el-upload
         class="avatar-uploader"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        :show-file-list="false"
+        action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+        name="image"
         :headers="uploadHeaders"
+        :show-file-list="false"
         :on-success="handleSuccess"
       >
         <img v-if="imageUrl" :src="imageUrl" class="avatar" />
@@ -52,13 +54,14 @@
     </el-dialog>
   </div>
 </template>
+
 <script>
 import auth from '@/utils/auth'
 export default {
-  name: "app-image",
-  data() {
+  name: 'app-image',
+  data () {
     return {
-      //控制对话框的隐藏显示
+      // 控制對話框顯示隱藏
       dialogVisible: false,
       // 查询条件
       reqParams: {
@@ -66,88 +69,101 @@ export default {
         page: 1,
         per_page: 10
       },
+      // 素材列表
       images: [],
+      // 总条数
       total: 0,
-      imageUrl:null,
+      // 预览图片地址
+      imageUrl: null,
+      // 上传请求头
       uploadHeaders: {
         Authorization: `Bearer ${auth.getUser().token}`
-      },
-    };
+      }
+    }
   },
-  created() {
-    this.getImages();
+  created () {
+    this.getImages()
   },
   methods: {
-    
-    //上传成功
-    handleSuccess(res){
+    // 上传成功
+    handleSuccess (res) {
+      // 提示 + 预览
       this.$message.success('上传成功')
-      this.imageUrl=res.data.imageUrlwindow.setTimeout(()=>{
-        this.dialogVisible=falsethis.getImages()
-      },3000)
-
+      this.imageUrl = res.data.url
+      // 关闭对话框 + 更新当前列表
+      window.setTimeout(() => {
+        this.dialogVisible = false
+        this.getImages()
+      }, 3000)
     },
-    //打开对话框
-    openDialog() {
+    // 打开对话框
+    openDialog () {
       // 1. 准备一个对话框
       // 2. 再来打开对话框
-      this.doalogVisible = true;
-      this.imageUrl=null
+      this.dialogVisible = true
+      // 清空预览图
+      this.imageUrl = null
     },
-    //删除素材
-    delImage(id) {
-      this.$confirm("亲，您是否要删除该图片素材?", "温馨提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+    // 删除函数
+    delImage (id) {
+      // 确认框
+      this.$confirm('亲，您是否要删除该图片素材?', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(async () => {
+          // 删除请求
           try {
-            await this.$http.delete(`/user/image${id}`);
-            this.$mesage.sucess("删除成功");
-            this.getImages();
+            await this.$http.delete(`/user/images/${id}`)
+            this.$message.success('删除成功')
+            this.getImages()
           } catch (e) {
-            this.$message.error("删除失败");
+            this.$message.error('删除失败')
           }
         })
-        .catch(() => {});
+        .catch(() => {})
     },
-    async toggleStatus(item) {
+    // 切换添加收藏与取消收藏
+    async toggleStatus (item) {
       try {
         const res = await this.$http.put(`/user/images/${item.id}`, {
           collect: !item.is_collected
-        });
+        })
+        // res.data.data.collect 就是当前素材状态
         this.$message.success(
-          res.data.data.collect ? "添加收藏成功" : "取消收藏成功"
-        );
-        item.is_collected = res.data.data.collect;
+          res.data.data.collect ? '添加收藏成功' : '取消收藏成功'
+        )
+        // item 就是素材数据  is_collected 显示收藏图标的 颜色
+        item.is_collected = res.data.data.collect
       } catch (e) {
-        this.$message.error("操作失败");
+        this.$message.error('操作失败')
       }
     },
-
-    changeCollect() {
-      this.reqParams.page = 1;
-      this.getImages();
+    // 切换全部与收藏
+    changeCollect () {
+      this.reqParams.page = 1
+      this.getImages()
     },
-    pager(newPage) {
-      this.reqParams.page = newPage;
-      this.getImages();
+    // 切换分页
+    pager (newPage) {
+      this.reqParams.page = newPage
+      this.getImages()
     },
-    async getImages() {
-      const res = await this.$http.get("user/images", {
+    // 获取素材
+    async getImages () {
+      const res = await this.$http.get('user/images', {
         params: this.reqParams
-      });
-      this.images = res.data.data.results;
-      this.total = res.data.data.total_count;
+      })
+      this.images = res.data.data.results
+      this.total = res.data.data.total_count
     }
   }
-};
+}
 </script>
 
-
 <style scoped lang='less'>
-//图片列表
+// 图片列表
 .img-list {
   margin-bottom: 15px;
   .img-item {
