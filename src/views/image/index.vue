@@ -12,12 +12,7 @@
           <el-radio-button :label="false">全部</el-radio-button>
           <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
-        <el-button 
-         style="float:right" 
-         type="success" 
-         size="small"
-         @click="openDialog"
-         >添加素材</el-button>
+        <el-button style="float:right" type="success" size="small" @click="openDialog">添加素材</el-button>
       </div>
       <!-- 列表 -->
       <div class="img-list">
@@ -29,9 +24,7 @@
               @click="toggleStatus(item)"
               :class="{red:item.is_collected}"
             ></span>
-            <span
-            @click="delImage(item.id)"
-             class="el-icon-delete"></span>
+            <span @click="delImage(item.id)" class="el-icon-delete"></span>
           </div>
         </div>
       </div>
@@ -44,20 +37,29 @@
         :total="total"
       ></el-pagination>
     </el-card>
-     <!-- 对话框 -->
+    <!-- 对话框 -->
     <el-dialog title="添加素材" :visible.sync="dialogVisible" width="300px">
-      <span>上传组件</span>
+      <el-upload
+        class="avatar-uploader"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :show-file-list="false"
+        :headers="uploadHeaders"
+        :on-success="handleSuccess"
+      >
+        <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+      </el-upload>
     </el-dialog>
   </div>
-
 </template>
 <script>
+import auth from '@/utils/auth'
 export default {
   name: "app-image",
   data() {
     return {
       //控制对话框的隐藏显示
-      dialogVisible:false,
+      dialogVisible: false,
       // 查询条件
       reqParams: {
         collect: false,
@@ -65,33 +67,50 @@ export default {
         per_page: 10
       },
       images: [],
-      total: 0
+      total: 0,
+      imageUrl:null,
+      uploadHeaders: {
+        Authorization: `Bearer ${auth.getUser().token}`
+      },
     };
   },
   created() {
     this.getImages();
   },
   methods: {
+    
+    //上传成功
+    handleSuccess(res){
+      this.$message.success('上传成功')
+      this.imageUrl=res.data.imageUrlwindow.setTimeout(()=>{
+        this.dialogVisible=falsethis.getImages()
+      },3000)
+
+    },
     //打开对话框
-    openDialog(){
-        // 1. 准备一个对话框
+    openDialog() {
+      // 1. 准备一个对话框
       // 2. 再来打开对话框
-      this.doalogVisible = true
+      this.doalogVisible = true;
+      this.imageUrl=null
     },
     //删除素材
-    delImage(id){
-       this.$confirm('亲，您是否要删除该图片素材?', '温馨提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'}).then(async()=>{
-          try{
-            await this.$http.delete(`/user/image${id}`)
-            this.$mesage.sucess('删除成功')
-            this.getImages()
-          }catch(e){
-            this.$message.error('删除失败')
+    delImage(id) {
+      this.$confirm("亲，您是否要删除该图片素材?", "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          try {
+            await this.$http.delete(`/user/image${id}`);
+            this.$mesage.sucess("删除成功");
+            this.getImages();
+          } catch (e) {
+            this.$message.error("删除失败");
           }
-        }).catch(()=>{})
+        })
+        .catch(() => {});
     },
     async toggleStatus(item) {
       try {
@@ -107,17 +126,19 @@ export default {
       }
     },
 
-  changeCollect () {
-      this.reqParams.page = 1
-      this.getImages()
+    changeCollect() {
+      this.reqParams.page = 1;
+      this.getImages();
     },
-     pager (newPage) {
-      this.reqParams.page = newPage
-      this.getImages()
+    pager(newPage) {
+      this.reqParams.page = newPage;
+      this.getImages();
     },
-     async getImages () {
-      const res = await this.$http.get('user/images', { params: this.reqParams })
-      this.images = res.data.data.results
+    async getImages() {
+      const res = await this.$http.get("user/images", {
+        params: this.reqParams
+      });
+      this.images = res.data.data.results;
       this.total = res.data.data.total_count;
     }
   }
@@ -126,6 +147,7 @@ export default {
 
 
 <style scoped lang='less'>
+//图片列表
 .img-list {
   margin-bottom: 15px;
   .img-item {
