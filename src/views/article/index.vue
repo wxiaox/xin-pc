@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item label="频道">
           <!-- 下拉框 -->
-          <el-select @change="changeChannel_id" v-model="filterData.channel_id" placeholder="请选择">
+          <el-select @change="changeChannel" v-model="filterData.channel_id" placeholder="请选择">
             <el-option
               v-for="item in channelOptions"
               :key="item.id"

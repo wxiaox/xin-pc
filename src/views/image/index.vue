@@ -16,30 +16,33 @@
       </div>
       <!-- 列表 -->
       <div class="img-list">
-        <div class="img-item" v-for="item in images" :key="item">
+        <div class="img-item" v-for="item in images" :key="item.id">
           <img :src="item.url" alt />
           <div class="option" v-if="!reqParams.collect">
-            <span class="el-icon-star-off"></span>
+            <span
+              class="el-icon-star-off"
+              @click="toggleStatus(item)"
+              :class="{red:item.is_collected}"
+            ></span>
             <span class="el-icon-delete"></span>
           </div>
         </div>
       </div>
       <!-- 分页 -->
-      <el-pagination 
-      background layout="prev, pager, next" 
-      :total="total"
-      :page-size="reqParams.per_page"
-      :current-page="reqParams.page"
-      @current-change="pager"
-      >
-      </el-pagination>
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :page-size="reqParams.per_page"
+        :current-page="reqParams.page"
+        :total="total"
+      ></el-pagination>
     </el-card>
   </div>
 </template>
 <script>
 export default {
-  name: 'app-image',
-  data () {
+  name: "app-image",
+  data() {
     return {
       // 查询条件
       reqParams: {
@@ -47,29 +50,43 @@ export default {
         page: 1,
         per_page: 10
       },
-      images:[],
-      total:0
-    }
+      images: [],
+      total: 0
+    };
   },
-  created(){
-   this.getImages()
+  created() {
+    this.getImages();
   },
-  methods:{
-    changeCollect(){
-      this.reqParams.pafe = 1
+  methods: {
+    async toggleStatus(item) {
+      try {
+        const res = await this.$http.put(`/user/images/${item.id}`, {
+          collect: !item.is_collected
+        });
+        this.$message.success(
+          res.data.data.collect ? "添加收藏成功" : "取消收藏成功"
+        );
+        item.is_collected = res.data.data.collect;
+      } catch (e) {
+        this.$message.error("操作失败");
+      }
+    },
+
+  changeCollect () {
+      this.reqParams.page = 1
       this.getImages()
     },
-    pager(){
-      this.reqParams.page= newPage
+     pager (newPage) {
+      this.reqParams.page = newPage
       this.getImages()
     },
-    async getImages(){
-      const res= await this.$http.get('user/images',{params:this.reqParams})
-      this.images=res.data.results
-      this.total=res.data.data.total_count
+     async getImages () {
+      const res = await this.$http.get('user/images', { params: this.reqParams })
+      this.images = res.data.data.results
+      this.total = res.data.data.total_count;
     }
   }
-}
+};
 </script>
 
 
@@ -102,7 +119,7 @@ export default {
         color: #fff;
         margin: 0 30px;
       }
-      .red{
+      .red {
         color: red;
       }
     }
