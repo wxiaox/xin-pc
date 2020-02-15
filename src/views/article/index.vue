@@ -19,14 +19,8 @@
         </el-form-item>
         <el-form-item label="频道">
           <!-- 下拉框 -->
-          <el-select @change="changeChannel" v-model="filterData.channel_id" placeholder="请选择">
-            <el-option
-              v-for="item in channelOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+         <!-- 自己的组件 -->
+         <my-channel :value="filterData.channel_id" @input="filterData.channel_id=$event"></my-channel>
         </el-form-item>
         <el-form-item label="日期">
           <!-- 日期组件 -->
@@ -112,7 +106,7 @@ export default {
     };
   },
   created() {
-    this.getChannelOptions();
+    // this.getChannelOptions();
     this.getArticles();
   },
   methods: {
@@ -134,11 +128,11 @@ export default {
     toEdArticle (id){
       this.$router.push(`publish?id=${id}`)
     },
-    changeChannel (){
-      if (this.filterData.channel_id==''){
-        this.filterData.channel_id=null
-      }
-    },
+    // changeChannel (){
+    //   if (this.filterData.channel_id==''){
+    //     this.filterData.channel_id=null
+    //   }
+    // },
     search(){
       this.filterData.page=1
       this.getArticles()
@@ -157,17 +151,20 @@ export default {
         this.filterData.end_pubdate = null
       }
     },
-    async getChannelOptions() {
-      // 发请求获取频道数据
-      const res = await this.$http.get("channels");
-      // res = {data:{message:'',data:{channels:[// 频道数组 ]}}}
-      // this.channelOptions = [{id,name}]  数据格式
-      this.channelOptions = res.data.data.channels;
-    },
-    async getArticles() {
-      const res = await this.$http.get("articles", { params: this.filterData });
-      this.articles = res.data.data.results;
-       this.total = res.data.data.total_count
+    // async getChannelOptions() {
+    //   // 发请求获取频道数据
+    //   const res = await this.$http.get("channels");
+    //   // res = {data:{message:'',data:{channels:[// 频道数组 ]}}}
+    //   // this.channelOptions = [{id,name}]  数据格式
+    //   this.channelOptions = res.data.data.channels;
+    // },
+  async getArticles () {
+      // post('地址','请求体数据')
+      // 如果是get请求，如何传递参数对象 get('地址',{params:'get对象参数'})
+      const res = await this.$http.get('articles', { params: this.filterData })
+      this.articles = res.data.data.results
+      // 设置总条数
+      this.total = res.data.data.total_count
       console.log(res)
     },
     pager (newPage) {
