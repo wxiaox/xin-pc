@@ -7,9 +7,32 @@
     <!-- 对话框 -->
     <el-dialog :visible.sync="dialogVisible" width="750px">
       <el-tabs v-model="activeName" type="card">
-        <el-tab-pane label="素材库" name="list">1</el-tab-pane>
+        <el-tab-pane label="素材库" name="list">
+          <div v-loading="loading">
+            <el-radio-group @change="changeCollect" v-model="reqParams.collect" size="small">
+              <el-radio-button :label="false">全部</el-radio-button>
+              <el-radio-button :label="true">收藏</el-radio-button>
+            </el-radio-group>
+            <!-- 列表 -->
+            <div class="img-list">
+              <div class="img-item" v-for="item in images" :key="item.id">
+                <img :src="item.url" alt />
+              </div>
+            </div>
+            <!-- 分页 -->
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              hide-on-single-page
+              @current-change="pager"
+              :current-page="reqParams.page"
+              :page-size="reqParams.per_page"
+              :total="total"
+            ></el-pagination>
+          </div>
+        </el-tab-pane>
+
         <el-tab-pane label="上传图片" name="upload">2</el-tab-pane>
-       
       </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -25,18 +48,67 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      activeName:'list'
+      activeName: "list",
+      reqParams: {
+        collect: false,
+        page: 1,
+        per_page: 8
+      },
+      images: [],
+      total: 0,
+      loading:false
     };
   },
   methods: {
+    
     openDialog() {
       this.dialogVisible = true;
+      this.getImages();
+    },
+    //分页
+    pager(newpage) {
+      this.reqParams.page = newpage;
+      this.getImages();
+    },
+    //切换全部与收藏
+    changeCollect(){
+      this.reqParams.page = 1
+      this.getImages()
+    },
+        //获取图片信息
+    async getImages() {
+      //开始加载
+      const res = await this.$http.get("user/images", {
+        params: this.reqParams
+      });
+      
+      //加载完成
+      this.loading = false
+      this.images = res.data.data.results;
+      this.total = res.data.data.total_count;
+      
     }
   }
 };
 </script>
 
 <style scoped lang='less'>
+.img-list {
+  padding-top: 20px;
+  .img-item {
+    width: 150px;
+    height: 120px;
+    border: 1px dashed #ddd;
+    display: inline-block;
+    margin-right: 20px;
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  }
+}
+
 .my-image {
   display: inline-block;
   margin-right: 20px;
