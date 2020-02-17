@@ -15,7 +15,13 @@
             </el-radio-group>
             <!-- 列表 -->
             <div class="img-list">
-              <div class="img-item" v-for="item in images" :key="item.id">
+              <div 
+              @click="selectedImage(item.url)"
+              :class="{selected:selectedImageUrl===item.url}"
+              class="img-item" 
+              v-for="item in images" 
+              :key="item.id"
+              >
                 <img :src="item.url" alt />
               </div>
             </div>
@@ -47,7 +53,9 @@ export default {
   name: "my-image",
   data() {
     return {
+      //控制对话框隐藏显示
       dialogVisible: false,
+      selectedImageUrl:null,
       activeName: "list",
       reqParams: {
         collect: false,
@@ -56,11 +64,14 @@ export default {
       },
       images: [],
       total: 0,
-      loading:false
+      loading: false
     };
   },
   methods: {
-    
+    //选中图片
+    selectedImage(url){
+      this.selectedImageUrl = url
+    },
     openDialog() {
       this.dialogVisible = true;
       this.getImages();
@@ -71,22 +82,21 @@ export default {
       this.getImages();
     },
     //切换全部与收藏
-    changeCollect(){
-      this.reqParams.page = 1
-      this.getImages()
+    changeCollect() {
+      this.reqParams.page = 1;
+      this.getImages();
     },
-        //获取图片信息
+    //获取图片信息
     async getImages() {
       //开始加载
       const res = await this.$http.get("user/images", {
         params: this.reqParams
       });
-      
+
       //加载完成
-      this.loading = false
+      this.loading = false;
       this.images = res.data.data.results;
       this.total = res.data.data.total_count;
-      
     }
   }
 };
@@ -101,21 +111,22 @@ export default {
     border: 1px dashed #ddd;
     display: inline-block;
     margin-right: 20px;
-    position:relative;
+    position: relative;
     img {
       width: 100%;
       height: 100%;
       display: block;
     }
     &.selected::after {
-        content:'';
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.3) url(../assets/selected.png) no-repeat center/50px auto;
-    } 
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3) url(../assets/selected.png) no-repeat
+        center/50px auto;
+    }
   }
 }
 
