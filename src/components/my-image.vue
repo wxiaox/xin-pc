@@ -101,11 +101,21 @@ export default {
     border: 1px dashed #ddd;
     display: inline-block;
     margin-right: 20px;
+    position:relative;
     img {
       width: 100%;
       height: 100%;
       display: block;
     }
+    &.selected::after {
+        content:'';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.3) url(../assets/selected.png) no-repeat center/50px auto;
+    } 
   }
 }
 
