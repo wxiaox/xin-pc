@@ -68,11 +68,7 @@
             plain type="primary"
              icon="el-icon-edit" 
              circle></el-button>
-            <el-button 
-            @click="delArticle(scope.row.id)"
-             plain type="danger"
-              icon="el-icon-delete" 
-              circle></el-button>
+              <el-button @click="delArticle(scope.row.id)" plain type="danger" icon="el-icon-delete" circle></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,20 +106,23 @@ export default {
     this.getArticles();
   },
   methods: {
-    delArticle (id) {
-      this.$confirm('确定要删除这篇文章吗','温馨提示',{
-        confirmButtonText:'确定',
-        confirmButtonText:'取消',
-        type:'warning'
-      }).then(async()=> {
+       delArticle (id) {
+      // 确认框
+      this.$confirm('亲，您是否要删除该篇文章?', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        // 删除请求
         try {
+          // 13911111111 账号是测试账号，无法删除数据。
           await this.$http.delete(`articles/${id}`)
           this.$message.success('删除成功')
           this.getArticles()
-        }catch(e){
+        } catch (e) {
           this.$message.error('删除失败')
         }
-      }).catch(()=>{})
+      }).catch(() => {})
     },
     toEdArticle (id){
       this.$router.push(`publish?id=${id}`)
